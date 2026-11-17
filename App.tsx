@@ -204,6 +204,11 @@ const Footer = () => {
           <p className="mt-3 text-sm text-slate-500 leading-relaxed max-w-xs">
             Die Plattform, auf der Immobilieneigentümer und Hausverwaltungen zueinander finden.
           </p>
+          <address className="mt-4 not-italic text-sm text-slate-600 space-y-1">
+            <p>B&amp;W Immobilien Management UG<br />Goethestraße 42, 45964 Gladbeck</p>
+            <p><a href="tel:+4915129468127" className="hover:text-brand-700">+49 151 29468127</a></p>
+            <p><a href="mailto:info@bundwimmobilien.de" className="text-brand-700 underline underline-offset-2">info@bundwimmobilien.de</a></p>
+          </address>
         </div>
         {cols.map(col => (
           <nav key={col.title} aria-label={col.title}>
@@ -246,8 +251,8 @@ const ScrollToTop = () => {
 };
 
 const TITLES: [RegExp, string][] = [
-  [/^\/$/, 'HausMatch – Die passende Hausverwaltung finden'],
-  [/^\/wizard/, 'Objekt beschreiben'],
+  [/^\/$/, 'Hausverwaltung finden – kostenlos und anonym | HausMatch'],
+  [/^\/(wizard|hausverwaltung-finden)/, 'Hausverwaltung finden – Objekt beschreiben'],
   [/^\/search-results/, 'Passende Hausverwaltungen'],
   [/^\/anfragen/, 'Meine Anfragen'],
   [/^\/dashboard/, 'Lead-Center'],
@@ -301,6 +306,7 @@ const Shell = () => {
             <Route path="/login" element={<Login key="login" />} />
             <Route path="/register" element={<Login key="register" initialView="role_select" />} />
             <Route path="/wizard" element={<Wizard />} />
+            <Route path="/hausverwaltung-finden" element={<Wizard />} />
             <Route path="/search-results" element={<SearchResults />} />
             <Route path="/network" element={<Network />} />
             <Route path="/forum" element={<Forum />} />

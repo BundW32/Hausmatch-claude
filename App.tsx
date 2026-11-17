@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { BrowserRouter, Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './services/auth';
 import { subscribeUnreadCount } from './services/dataService';
 import { reopenConsent } from './services/consent';
@@ -50,12 +50,20 @@ const Logo = () => (
 );
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout: signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const unread = useUnreadCount();
+  // Erst zur Startseite, dann abmelden – so merkt sich der Login keine Seite des vorherigen Nutzers.
+  const logout = async () => {
+    navigate('/');
+    await signOut();
+  };
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => setMobileOpen(false), [location.pathname]);
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   const links: { to: string; label: string; badge?: number }[] = [
     ...(user?.role === 'manager'
@@ -231,9 +239,35 @@ const ProtectedRoute = ({ children, allowedRoles }: React.PropsWithChildren<{ al
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 };
+
+const TITLES: [RegExp, string][] = [
+  [/^\/$/, 'HausMatch – Die passende Hausverwaltung finden'],
+  [/^\/wizard/, 'Objekt beschreiben'],
+  [/^\/search-results/, 'Passende Hausverwaltungen'],
+  [/^\/anfragen/, 'Meine Anfragen'],
+  [/^\/dashboard/, 'Lead-Center'],
+  [/^\/messages/, 'Postfach'],
+  [/^\/network/, 'Netzwerk'],
+  [/^\/forum/, 'Forum'],
+  [/^\/profile/, 'Profil'],
+  [/^\/ratgeber/, 'Immobilien-Ratgeber'],
+  [/^\/kreditrechner/, 'Kreditrechner für Immobilien'],
+  [/^\/managers/, 'Für Hausverwaltungen'],
+  [/^\/seekers/, 'Für Eigentümer'],
+  [/^\/blog/, 'Branchen-News'],
+  [/^\/about/, 'Über uns'],
+  [/^\/contact/, 'Kontakt'],
+  [/^\/legal\/impressum/, 'Impressum'],
+  [/^\/legal\/privacy/, 'Datenschutzerklärung'],
+  [/^\/legal\/agb/, 'AGB'],
+  [/^\/login/, 'Anmelden'],
+  [/^\/register/, 'Registrieren'],
+];
 
 /** Bereiche, die die volle Höhe nutzen – dort gibt es weder Footer noch Chat-Assistent. */
 const APP_VIEWS = ['/messages', '/dashboard'];
@@ -241,6 +275,10 @@ const APP_VIEWS = ['/messages', '/dashboard'];
 const Shell = () => {
   const { pathname } = useLocation();
   const isAppView = APP_VIEWS.some(p => pathname.startsWith(p));
+  useEffect(() => {
+    const title = TITLES.find(([re]) => re.test(pathname))?.[1];
+    document.title = !title || pathname === '/' ? title || 'HausMatch' : `${title} – HausMatch`;
+  }, [pathname]);
   return (
     <div className={`${isAppView ? 'h-dvh' : 'min-h-dvh'} pt-16 flex flex-col`}>
       <Navbar />

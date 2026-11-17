@@ -125,6 +125,7 @@ const Profile = () => {
     setForm(toForm(profile));
     setFormError('');
     setEditing(true);
+    window.scrollTo(0, 0);
   };
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => setForm(f => (f ? { ...f, [key]: value } : f));
@@ -177,6 +178,7 @@ const Profile = () => {
       });
       await refreshUser();
       setEditing(false);
+      window.scrollTo(0, 0);
       toast('Profil gespeichert.', 'success');
     } catch (err) {
       setFormError(errorText(err, 'Das Profil konnte nicht gespeichert werden.'));

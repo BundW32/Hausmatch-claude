@@ -13,19 +13,17 @@ const MatchCard: React.FC<{ match: MatchResult; onMessage: () => void; canMessag
   const m = match.manager;
   return (
     <li className="card p-5 sm:p-6">
-      <div className="flex items-start gap-4">
+      <div className="flex flex-wrap sm:flex-nowrap items-start gap-x-4 gap-y-3">
         <Avatar name={m.name} src={m.avatar} size="lg" />
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h3 className="text-lg font-bold text-slate-900 truncate">{m.name}</h3>
-            {m.verified && <span className="badge badge-green"><Icon name="badgeCheck" className="w-3.5 h-3.5" /> Von HausMatch geprüft</span>}
-          </div>
+          <h3 className="text-lg font-bold text-slate-900 break-words">{m.name}</h3>
+          {m.verified && <span className="badge badge-green mt-1"><Icon name="badgeCheck" className="w-3.5 h-3.5" /> Von HausMatch geprüft</span>}
           {m.location && <p className="mt-0.5 text-sm text-slate-500 flex items-center gap-1"><Icon name="pin" className="w-4 h-4" /> {m.location}</p>}
-          {m.bio && <p className="mt-2 text-sm text-slate-600 line-clamp-2">{m.bio}</p>}
+          {m.bio && <p className="mt-2 text-sm text-slate-600 line-clamp-2 break-words">{m.bio}</p>}
         </div>
-        <div className="text-right shrink-0">
+        <div className="w-full sm:w-auto shrink-0 flex sm:block items-baseline gap-2 sm:text-right">
           <div className="text-2xl font-extrabold text-brand-700 leading-none">{match.score}<span className="text-sm font-semibold"> %</span></div>
-          <div className="text-xs text-slate-500 mt-1">Übereinstimmung</div>
+          <div className="text-xs text-slate-500 sm:mt-1">Übereinstimmung</div>
         </div>
       </div>
 
@@ -168,7 +166,7 @@ const SearchResults = () => {
 
       {!loading && !error && criteria && matches.length > 0 && (
         <>
-          <p className="text-sm text-slate-500 mb-3">{matches.length} {matches.length === 1 ? 'Treffer' : 'Treffer'}</p>
+          <p className="text-sm text-slate-500 mb-3">{matches.length} Treffer</p>
           <ul className="space-y-4">
             {matches.map(m => (
               <MatchCard key={m.manager.id} match={m} canMessage={user?.id !== m.manager.id} onMessage={() => setMessageTo(m.manager)} />

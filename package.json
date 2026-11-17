@@ -10,6 +10,7 @@
     "lint": "tsc --noEmit",
     "emulators": "npx -y firebase-tools@latest emulators:start --only auth,firestore --project demo-hausmatch",
     "test:rules": "npx -y firebase-tools@latest emulators:exec --only firestore --project demo-hausmatch \"vitest run tests/rules\"",
+    "test:api": "vitest run tests/api",
     "test:e2e": "node tests/e2e/run.mjs"
   },
   "dependencies": {

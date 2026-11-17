@@ -2,6 +2,9 @@ import { useState, useMemo } from 'react';
 import { Icon } from './ui/Icon';
 import { Link } from 'react-router-dom';
 
+const formatZahl = (v: number, stellen: number) =>
+  v.toLocaleString('de-DE', { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
+
 const formatEuro = (v: number) =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
 
@@ -144,16 +147,16 @@ const Kreditrechner = () => {
                   <label htmlFor="kr-1" className={labelClass}>Kaufpreis</label>
                   <div className="relative">
                     <input id="kr-1" type="number" className={inputClass} value={kaufpreis} onChange={e => setKaufpreis(+e.target.value)} step={10000} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-2" className={labelClass}>Eigenkapital</label>
                   <div className="relative">
                     <input id="kr-2" type="number" className={inputClass} value={eigenkapital} onChange={e => setEigenkapital(+e.target.value)} step={5000} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
-                  <div className="mt-1 text-xs text-slate-400 font-medium">
+                  <div className="mt-1 text-xs text-slate-500 font-medium">
                     EK-Quote: {kaufpreis > 0 ? Math.round((eigenkapital / kaufpreis) * 100) : 0} %
                   </div>
                 </div>
@@ -161,7 +164,7 @@ const Kreditrechner = () => {
                   <label htmlFor="kr-3" className={labelClass}>Bundesland</label>
                   <select id="kr-3" className={inputClass} value={bundesland} onChange={e => setBundesland(e.target.value)}>
                     {BUNDESLAENDER.map(b => (
-                      <option key={b.name} value={b.name}>{b.name} ({b.gew} % GrESt)</option>
+                      <option key={b.name} value={b.name}>{b.name} ({b.gew.toLocaleString('de-DE')} % GrESt)</option>
                     ))}
                   </select>
                 </div>
@@ -188,14 +191,14 @@ const Kreditrechner = () => {
                   <label htmlFor="kr-4" className={labelClass}>Zinssatz p.a.</label>
                   <div className="relative">
                     <input id="kr-4" type="number" className={inputClass} value={zins} onChange={e => setZins(+e.target.value)} step={0.1} min={0.1} max={15} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-5" className={labelClass}>Anfangstilgung p.a.</label>
                   <div className="relative">
                     <input id="kr-5" type="number" className={inputClass} value={tilgung} onChange={e => setTilgung(+e.target.value)} step={0.1} min={0.5} max={10} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
@@ -212,22 +215,22 @@ const Kreditrechner = () => {
                   <label htmlFor="kr-7" className={labelClass}>Jahresmiete (kalt)</label>
                   <div className="relative">
                     <input id="kr-7" type="number" className={inputClass} value={jahresmiete} onChange={e => setJahresmiete(+e.target.value)} step={600} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
-                  <div className="mt-1 text-xs text-slate-400 font-medium">= {formatEuro(jahresmiete / 12)} / Monat</div>
+                  <div className="mt-1 text-xs text-slate-500 font-medium">= {formatEuro(jahresmiete / 12)} / Monat</div>
                 </div>
                 <div>
                   <label htmlFor="kr-8" className={labelClass}>Verwaltungskosten / Jahr</label>
                   <div className="relative">
                     <input id="kr-8" type="number" className={inputClass} value={verwaltungKosten} onChange={e => setVerwaltungKosten(+e.target.value)} step={100} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-9" className={labelClass}>Instandhaltung / Jahr</label>
                   <div className="relative">
                     <input id="kr-9" type="number" className={inputClass} value={instandhaltung} onChange={e => setInstandhaltung(+e.target.value)} step={100} />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>
               </div>
@@ -252,25 +255,25 @@ const Kreditrechner = () => {
                   <h3 className="text-xs font-bold text-slate-500 mb-4">Darlehensbedarf</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-xs text-slate-400 font-medium mb-0.5">Kaufpreis</div>
+                      <div className="text-xs text-slate-500 font-medium mb-0.5">Kaufpreis</div>
                       <div className="text-xl font-bold text-slate-900">{formatEuro(kaufpreis)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-400 font-medium mb-0.5">Nebenkosten gesamt</div>
+                      <div className="text-xs text-slate-500 font-medium mb-0.5">Nebenkosten gesamt</div>
                       <div className="text-xl font-bold text-slate-900">{formatEuro(ergebnis.gesamtNebenkosten)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-400 font-medium mb-0.5">Eigenkapital</div>
+                      <div className="text-xs text-slate-500 font-medium mb-0.5">Eigenkapital</div>
                       <div className="text-xl font-bold text-green-600">− {formatEuro(eigenkapital)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-400 font-medium mb-0.5">Darlehensbetrag</div>
+                      <div className="text-xs text-slate-500 font-medium mb-0.5">Darlehensbetrag</div>
                       <div className="text-xl font-bold text-brand-600">{formatEuro(ergebnis.darlehen)}</div>
                     </div>
                   </div>
-                  <div className="mt-4 text-xs text-slate-400 font-medium flex items-center gap-1">
+                  <div className="mt-4 text-xs text-slate-500 font-medium flex items-center gap-1">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Beleihungsquote (LTV): {ergebnis.ltvRatio.toFixed(1)} %
+                    Beleihungsquote (LTV): {formatZahl(ergebnis.ltvRatio, 1)} %
                     {ergebnis.ltvRatio > 80 && <span className="text-amber-500 ml-1">· Ggf. Risikoaufschlag der Bank möglich</span>}
                   </div>
                 </div>
@@ -280,7 +283,7 @@ const Kreditrechner = () => {
                   <h3 className="text-xs font-bold text-slate-500 mb-4">Nebenkosten im Detail</h3>
                   <div className="space-y-3">
                     {[
-                      { label: `Grunderwerbsteuer (${bl.gew} %)`, value: ergebnis.grunderwerbsteuer },
+                      { label: `Grunderwerbsteuer (${bl.gew.toLocaleString('de-DE')} %)`, value: ergebnis.grunderwerbsteuer },
                       { label: 'Notarkosten (ca. 1,5 %)', value: ergebnis.notarkosten },
                       { label: 'Grundbucheintrag (ca. 0,5 %)', value: ergebnis.grundbuch },
                       ...(mitMakler ? [{ label: 'Maklercourtage (3,57 %)', value: ergebnis.maklerkosten }] : [])
@@ -299,7 +302,7 @@ const Kreditrechner = () => {
 
                 {/* Gesamtkosten */}
                 <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 text-center">
-                  <div className="text-xs font-bold text-slate-400 mb-1">Gesamtzinsen über {laufzeit} Jahre</div>
+                  <div className="text-xs font-bold text-slate-500 mb-1">Gesamtzinsen über {laufzeit} Jahre</div>
                   <div className="text-3xl font-bold text-slate-900">{formatEuro(ergebnis.gezahlteZinsen)}</div>
                 </div>
               </>
@@ -309,35 +312,35 @@ const Kreditrechner = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className={`bg-white rounded-2xl border p-5 shadow-sm ${ergebnis.bruttorendite >= 5 ? 'border-green-200' : ergebnis.bruttorendite >= 3 ? 'border-amber-200' : 'border-red-200'}`}>
-                    <div className="text-xs font-bold text-slate-400 mb-1">Bruttorendite</div>
+                    <div className="text-xs font-bold text-slate-500 mb-1">Bruttorendite</div>
                     <div className={`text-4xl font-bold ${ergebnis.bruttorendite >= 5 ? 'text-green-600' : ergebnis.bruttorendite >= 3 ? 'text-amber-600' : 'text-red-500'}`}>
-                      {ergebnis.bruttorendite.toFixed(2)} %
+                      {formatZahl(ergebnis.bruttorendite, 2)} %
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">Miete ÷ Kaufpreis</div>
+                    <div className="text-xs text-slate-500 mt-1">Miete ÷ Kaufpreis</div>
                   </div>
                   <div className={`bg-white rounded-2xl border p-5 shadow-sm ${ergebnis.nettorendite >= 3.5 ? 'border-green-200' : ergebnis.nettorendite >= 2 ? 'border-amber-200' : 'border-red-200'}`}>
-                    <div className="text-xs font-bold text-slate-400 mb-1">Nettorendite</div>
+                    <div className="text-xs font-bold text-slate-500 mb-1">Nettorendite</div>
                     <div className={`text-4xl font-bold ${ergebnis.nettorendite >= 3.5 ? 'text-green-600' : ergebnis.nettorendite >= 2 ? 'text-amber-600' : 'text-red-500'}`}>
-                      {ergebnis.nettorendite.toFixed(2)} %
+                      {formatZahl(ergebnis.nettorendite, 2)} %
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">Nach Kosten & Nebenkosten</div>
+                    <div className="text-xs text-slate-500 mt-1">Nach Kosten & Nebenkosten</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                    <div className="text-xs font-bold text-slate-400 mb-1">Monatl. Cashflow</div>
+                    <div className="text-xs font-bold text-slate-500 mb-1">Monatl. Cashflow</div>
                     <div className={`text-3xl font-bold ${ergebnis.cashflowMonatlich >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                       {ergebnis.cashflowMonatlich >= 0 ? '+' : ''}{formatEuro(ergebnis.cashflowMonatlich)}
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">Nettomiete − Rate</div>
+                    <div className="text-xs text-slate-500 mt-1">Nettomiete − Rate</div>
                   </div>
                   <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                    <div className="text-xs font-bold text-slate-400 mb-1">EK-Rendite</div>
+                    <div className="text-xs font-bold text-slate-500 mb-1">EK-Rendite</div>
                     <div className={`text-3xl font-bold ${ergebnis.eigenkapitalrendite >= 5 ? 'text-green-600' : ergebnis.eigenkapitalrendite >= 0 ? 'text-amber-600' : 'text-red-500'}`}>
-                      {ergebnis.eigenkapitalrendite.toFixed(2)} %
+                      {formatZahl(ergebnis.eigenkapitalrendite, 2)} %
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">Leverage-Effekt</div>
+                    <div className="text-xs text-slate-500 mt-1">Leverage-Effekt</div>
                   </div>
                 </div>
 
@@ -382,15 +385,15 @@ const Kreditrechner = () => {
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="p-5 border-b border-slate-200 flex flex-wrap gap-4">
                   <div>
-                    <div className="text-xs text-slate-400 font-medium">Startschuld</div>
+                    <div className="text-xs text-slate-500 font-medium">Startschuld</div>
                     <div className="font-bold text-slate-900">{formatEuro(ergebnis.darlehen)}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400 font-medium">Annuität p.a.</div>
+                    <div className="text-xs text-slate-500 font-medium">Annuität p.a.</div>
                     <div className="font-bold text-slate-900">{formatEuro(ergebnis.monatsrate * 12)}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400 font-medium">Gesamtzinsen</div>
+                    <div className="text-xs text-slate-500 font-medium">Gesamtzinsen</div>
                     <div className="font-bold text-red-500">{formatEuro(ergebnis.gezahlteZinsen)}</div>
                   </div>
                 </div>
@@ -416,13 +419,13 @@ const Kreditrechner = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-400 font-medium">
+                <div className="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 font-medium">
                   * Vereinfachte Berechnung mit konstanter Annuität. Zinsbindung und Anschlussfinanzierung nicht berücksichtigt.
                 </div>
               </div>
             )}
 
-            <div className="text-xs text-slate-400 font-medium text-center px-4">
+            <div className="text-xs text-slate-500 font-medium text-center px-4">
               Unverbindliche Richtwerte ohne Steuern und Sondertilgungen. Grunderwerbsteuersätze Stand {GREST_STAND}; Notar-, Grundbuch- und Maklerkosten sind Schätzwerte. Verbindliche Zahlen erhalten Sie von Ihrer Bank oder einem Finanzierungsberater.
             </div>
 

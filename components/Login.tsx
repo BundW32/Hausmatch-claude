@@ -47,7 +47,14 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
   const [busy, setBusy] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
-  const destination = (r: UserRole) => from || (r === 'manager' ? '/dashboard' : '/wizard');
+  const destination = (r: UserRole) => {
+    const fallback = r === 'manager' ? '/dashboard' : '/wizard';
+    if (!from || !from.startsWith('/') || from.startsWith('//')) return fallback;
+    // Seiten, die nur für die andere Rolle gedacht sind, nicht als Ziel übernehmen.
+    if (r !== 'manager' && from.startsWith('/dashboard')) return fallback;
+    if (r === 'manager' && (from.startsWith('/wizard') || from.startsWith('/anfragen'))) return fallback;
+    return from;
+  };
 
   // Bereits angemeldet? Dann direkt weiter.
   useEffect(() => {

@@ -203,24 +203,25 @@ const Ratgeber = () => {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {filtered.map(article => (
             <div key={article.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center"><Icon name={article.icon} className="w-6 h-6" /></span>
-                  <span className="text-xs font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
+                  <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
                     {article.category}
                   </span>
                 </div>
                 <h2 className="text-lg font-bold text-slate-900 mb-2 leading-snug">{article.title}</h2>
                 <p className="text-slate-500 text-sm font-medium leading-relaxed mb-4">{article.summary}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                  <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     {article.readTime} Lesezeit
                   </span>
                   <button
+                    aria-expanded={openArticle === article.id}
                     onClick={() => setOpenArticle(openArticle === article.id ? null : article.id)}
                     className="text-brand-600 text-xs font-bold hover:text-brand-700 flex items-center gap-1"
                   >

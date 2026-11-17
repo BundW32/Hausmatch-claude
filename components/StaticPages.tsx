@@ -4,7 +4,7 @@ import { fetchBlog } from '../services/api';
 import { sendContactMessage } from '../services/dataService';
 import { useAuth } from '../services/auth';
 import { BlogArticle } from '../types';
-import { EmptyState, Field, LoadingBlock, Notice } from './ui/Bits';
+import { EmptyState, Field, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { errorText } from './ui/Toast';
 
@@ -18,10 +18,10 @@ const httpsUrl = (raw: string) => {
 };
 
 export const AboutPage: React.FC = () => (
+  <>
+  <PageHeader eyebrow="Über uns" title="Eigentümer und Verwaltungen zusammenbringen" width="max-w-3xl" />
   <div className="page max-w-3xl">
-    <p className="eyebrow">Über uns</p>
-    <h1 className="page-title mt-1">Eigentümer und Verwaltungen zusammenbringen</h1>
-    <div className="prose-hm mt-6">
+    <div className="prose-hm">
       <p>
         Die passende Hausverwaltung zu finden, ist für viele Eigentümer und Eigentümergemeinschaften mühsam: Der Markt ist unübersichtlich,
         Angebote sind schwer vergleichbar, und gute Verwaltungen haben oft keine freien Kapazitäten. HausMatch macht diese Suche einfacher.
@@ -43,6 +43,7 @@ export const AboutPage: React.FC = () => (
       <Link to="/contact" className="btn btn-ghost">Kontakt</Link>
     </div>
   </div>
+  </>
 );
 
 export const BlogPage: React.FC = () => {
@@ -57,14 +58,12 @@ export const BlogPage: React.FC = () => {
   }, []);
 
   return (
+    <>
+    <PageHeader eyebrow="Branchen-News" title="Aktuelles für Eigentümer und Verwaltungen" width="max-w-3xl">
+      Automatisch erstellte Zusammenfassungen aktueller Meldungen (KI, mit Websuche). Bitte prüfen Sie wichtige Angaben in den verlinkten Quellen.
+    </PageHeader>
     <div className="page max-w-3xl">
-      <p className="eyebrow">Branchen-News</p>
-      <h1 className="page-title mt-1">Aktuelles für Eigentümer und Verwaltungen</h1>
-      <p className="mt-2 text-slate-600">
-        Automatisch erstellte Zusammenfassungen aktueller Meldungen (KI, mit Websuche). Bitte prüfen Sie wichtige Angaben in den verlinkten Quellen.
-      </p>
-
-      <div className="mt-6">
+      <div>
         {!failed && articles === null && <LoadingBlock label="Meldungen werden geladen …" />}
         {(failed || (articles && articles.length === 0)) && (
           <div className="card">
@@ -111,6 +110,7 @@ export const BlogPage: React.FC = () => {
         </ul>
       </div>
     </div>
+    </>
   );
 };
 
@@ -149,10 +149,10 @@ export const ContactPage: React.FC = () => {
   };
 
   return (
+    <>
+    <PageHeader eyebrow="Kontakt" title="Wir sind für Sie da" width="max-w-4xl" />
     <div className="page max-w-4xl">
-      <p className="eyebrow">Kontakt</p>
-      <h1 className="page-title mt-1">Wir sind für Sie da</h1>
-      <div className="mt-6 grid md:grid-cols-5 gap-6">
+      <div className="grid md:grid-cols-5 gap-6">
         <div className="md:col-span-3 card p-5 sm:p-6">
           {sent ? (
             <Notice kind="success">
@@ -188,5 +188,6 @@ export const ContactPage: React.FC = () => {
         </aside>
       </div>
     </div>
+    </>
   );
 };

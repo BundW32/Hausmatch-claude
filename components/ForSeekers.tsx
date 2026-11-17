@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Icon, IconName } from './ui/Icon';
+import { PageHeader } from './ui/Bits';
 
 const POINTS: { icon: IconName; title: string; text: string }[] = [
   { icon: 'shield', title: 'Ihre Daten bleiben bei Ihnen', text: 'Verwaltungen sehen Ihre Anfrage ohne Namen, E-Mail oder Telefonnummer. Sie entscheiden, wem Sie Ihre Kontaktdaten senden.' },
@@ -15,20 +16,22 @@ const FAQ = [
 ];
 
 const ForSeekers = () => (
-  <div className="page max-w-5xl">
-    <header className="max-w-3xl">
-      <p className="eyebrow">Für Eigentümer</p>
-      <h1 className="page-title mt-1">In wenigen Minuten zur passenden Hausverwaltung</h1>
-      <p className="mt-3 text-lg text-slate-600">
-        Ob WEG, Mietshaus oder Gewerbe: Beschreiben Sie Ihr Objekt einmal und sehen Sie, welche Verwaltungen dafür infrage kommen.
-      </p>
-      <div className="mt-6 flex flex-col sm:flex-row gap-2">
-        <Link to="/wizard" className="btn btn-primary btn-lg">Objekt beschreiben <Icon name="arrowRight" className="w-4 h-4" /></Link>
-        <Link to="/network" className="btn btn-secondary btn-lg">Verwaltungen ansehen</Link>
+  <>
+  <PageHeader
+    eyebrow="Für Eigentümer"
+    title="In wenigen Minuten zur passenden Hausverwaltung"
+    width="max-w-5xl"
+    footer={
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Link to="/wizard" className="btn btn-white btn-lg">Objekt beschreiben <Icon name="arrowRight" className="w-4 h-4" /></Link>
+        <Link to="/network" className="btn btn-lg text-white border border-white/30 hover:bg-white/10">Verwaltungen ansehen</Link>
       </div>
-    </header>
-
-    <ul className="mt-12 grid md:grid-cols-3 gap-4">
+    }
+  >
+    Ob WEG, Mietshaus oder Gewerbe: Beschreiben Sie Ihr Objekt einmal und sehen Sie, welche Verwaltungen dafür infrage kommen.
+  </PageHeader>
+  <div className="page max-w-5xl">
+    <ul className="grid md:grid-cols-3 gap-4">
       {POINTS.map(p => (
         <li key={p.title} className="card p-6">
           <span className="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center"><Icon name={p.icon} className="w-5 h-5" /></span>
@@ -53,6 +56,7 @@ const ForSeekers = () => (
       </div>
     </section>
   </div>
+  </>
 );
 
 export default ForSeekers;

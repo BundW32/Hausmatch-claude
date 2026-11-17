@@ -4,7 +4,7 @@ import { useAuth } from '../services/auth';
 import { listProfiles } from '../services/dataService';
 import { connectionLabel, useConnections } from '../services/useConnections';
 import { Profile } from '../types';
-import { Avatar, EmptyState, LoadingBlock, Notice } from './ui/Bits';
+import { Avatar, EmptyState, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon } from './ui/Icon';
 import { errorText, useToast } from './ui/Toast';
 import MessageModal from './MessageModal';
@@ -68,15 +68,13 @@ const Network = () => {
   const incomingProfiles = (profiles || []).filter(p => incoming.includes(p.id));
 
   return (
+    <>
+    <PageHeader eyebrow="Netzwerk" title={user ? 'Verwaltungen und Eigentümer' : 'Hausverwaltungen auf HausMatch'}>
+      {user ? 'Profile ansehen, Nachrichten schreiben und sich vernetzen.' : 'Melden Sie sich an, um Nachrichten zu schreiben und sich zu vernetzen.'}
+    </PageHeader>
     <div className="page">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-        <div>
-          <h1 className="page-title">Netzwerk</h1>
-          <p className="mt-2 text-slate-600">
-            {user ? 'Hausverwaltungen und Eigentümer auf HausMatch.' : 'Hausverwaltungen auf HausMatch. Melden Sie sich an, um sich zu vernetzen.'}
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 md:w-[28rem]">
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-2 md:max-w-[34rem]">
           <div className="relative flex-1">
             <label htmlFor="net-search" className="sr-only">Name, Ort oder Stichwort suchen</label>
             <Icon name="search" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -93,7 +91,7 @@ const Network = () => {
             </>
           )}
         </div>
-      </header>
+      </div>
 
       {incomingProfiles.length > 0 && (
         <Notice className="mb-6">
@@ -159,6 +157,7 @@ const Network = () => {
 
       {messageTo && <MessageModal recipient={{ id: messageTo.id, name: messageTo.name }} subject="Direktnachricht" onClose={() => setMessageTo(null)} />}
     </div>
+    </>
   );
 };
 

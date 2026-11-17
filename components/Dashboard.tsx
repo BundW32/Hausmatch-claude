@@ -80,7 +80,7 @@ const Dashboard = () => {
       {/* Liste */}
       <aside className={`${selected ? 'hidden lg:flex' : 'flex'} flex-col w-full lg:w-[400px] lg:shrink-0 bg-white border-r border-slate-200 min-h-0`}>
         <div className="p-4 sm:p-5 border-b border-slate-200">
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Lead-Center</h1>
+          <h1 className="text-2xl font-bold leading-none text-ink">Lead-Center</h1>
           <p className="text-sm text-slate-500 mt-0.5">Aktuelle Anfragen von Eigentümern</p>
           <div className="mt-4 flex gap-1 bg-slate-100 rounded-xl p-1" role="tablist" aria-label="Bearbeitungsstand">
             {TABS.map(t => (
@@ -141,7 +141,7 @@ const Dashboard = () => {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <span className="badge">{TABS.find(t => t.id === statusOf(selected.id))?.label}</span>
-                  <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900">{selected.propertyType} in {selected.city}</h2>
+                  <h2 className="mt-2 text-3xl font-bold leading-[1.05] text-ink">{selected.propertyType} in {selected.city}</h2>
                   <p className="text-sm text-slate-500 mt-1">Eingegangen am {formatDate(selected.createdAt)}</p>
                 </div>
                 <div className="flex gap-2">

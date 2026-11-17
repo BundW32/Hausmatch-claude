@@ -11,6 +11,30 @@ export const Avatar: React.FC<{ name: string; src?: string; size?: 'sm' | 'md' |
   );
 };
 
+/** Tiefblauer Kopfbereich jeder Seite: kleine Vorzeile, große Überschrift, optional Text und Aktionen. */
+export const PageHeader: React.FC<{
+  eyebrow?: string;
+  title: React.ReactNode;
+  width?: string;
+  actions?: React.ReactNode;
+  footer?: React.ReactNode;
+  children?: React.ReactNode;
+}> = ({ eyebrow, title, width = 'max-w-6xl', actions, footer, children }) => (
+  <div className="page-hero bg-navy-grid text-white">
+    <div className={`${width} mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10 md:pt-14 md:pb-12`}>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+        <div className="min-w-0">
+          {eyebrow && <p className="font-mono text-xs uppercase tracking-[0.06em] text-[#93b4ff]">{eyebrow}</p>}
+          <h1 className={`${eyebrow ? 'mt-3' : ''} display text-4xl md:text-[3.4rem] break-words`}>{title}</h1>
+          {children && <div className="mt-4 text-lg text-[#d5e0ff] max-w-2xl">{children}</div>}
+          {footer && <div className="mt-7">{footer}</div>}
+        </div>
+        {actions && <div className="shrink-0 flex flex-col sm:flex-row gap-2">{actions}</div>}
+      </div>
+    </div>
+  </div>
+);
+
 export const EmptyState: React.FC<{ icon: IconName; title: string; children?: React.ReactNode; action?: React.ReactNode }> = ({ icon, title, children, action }) => (
   <div className="text-center py-12 px-6">
     <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center">

@@ -5,7 +5,7 @@ import { deleteAccount, getProfile, resetPassword, updateOwnProfile } from '../s
 import { resizeImage } from '../services/image';
 import { connectionLabel, useConnections } from '../services/useConnections';
 import { OpeningHours, Profile as ProfileType, PROPERTY_TYPES, PropertyType } from '../types';
-import { Avatar, Field, LoadingBlock, Notice } from './ui/Bits';
+import { Avatar, Field, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { Modal } from './ui/Modal';
 import { errorText, useToast } from './ui/Toast';
@@ -231,12 +231,12 @@ const Profile = () => {
   // ------------------------------------------------------------ Bearbeiten
   if (editing && form && isOwn) {
     return (
+      <>
+      <PageHeader eyebrow="Profil" title="Profil bearbeiten" width="max-w-3xl">
+        {isManager ? 'Diese Angaben sind öffentlich sichtbar und bestimmen, bei welchen Anfragen Sie vorgeschlagen werden.' : 'Diese Angaben sehen angemeldete Mitglieder.'}
+      </PageHeader>
       <div className="page max-w-3xl">
-        <h1 className="page-title">Profil bearbeiten</h1>
-        <p className="mt-2 text-slate-600">
-          {isManager ? 'Diese Angaben sind öffentlich sichtbar und bestimmen, bei welchen Anfragen Sie vorgeschlagen werden.' : 'Diese Angaben sehen angemeldete Mitglieder.'}
-        </p>
-        <form onSubmit={save} className="mt-6 space-y-6">
+        <form onSubmit={save} className="space-y-6">
           {formError && <Notice kind="error">{formError}</Notice>}
 
           <section className="card p-5 sm:p-6 space-y-5">
@@ -337,32 +337,34 @@ const Profile = () => {
           </div>
         </form>
       </div>
+      </>
     );
   }
 
   // ---------------------------------------------------------------- Ansicht
   return (
-    <div className="page max-w-5xl">
-      <section className="card p-5 sm:p-8">
+    <>
+    <div className="bg-navy-grid text-white">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
           <Avatar name={profile.name} src={profile.avatar} size="xl" />
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 break-words">{profile.name}</h1>
+            <p className="font-mono text-xs uppercase tracking-[0.06em] text-[#93b4ff]">{isManager ? 'Hausverwaltung' : 'Eigentümer'}</p>
+            <h1 className="mt-2 display text-3xl sm:text-5xl break-words">{profile.name}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span className="badge">{isManager ? 'Hausverwaltung' : 'Eigentümer'}</span>
               {profile.verified && <span className="badge badge-green"><Icon name="badgeCheck" className="w-3.5 h-3.5" /> Von HausMatch geprüft</span>}
-              {profile.location && <span className="text-sm text-slate-500 flex items-center gap-1"><Icon name="pin" className="w-4 h-4" /> {profile.location}</span>}
+              {profile.location && <span className="text-[15px] text-[#d5e0ff] flex items-center gap-1"><Icon name="pin" className="w-4 h-4" /> {profile.location}</span>}
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
             {isOwn ? (
-              <button className="btn btn-primary" onClick={startEdit}>Profil bearbeiten</button>
+              <button className="btn btn-white" onClick={startEdit}>Profil bearbeiten</button>
             ) : (
               <>
-                <button className="btn btn-primary" onClick={() => (user ? setShowMessage(true) : navigate('/login', { state: { from: `/profile/${profile.id}` } }))}>
+                <button className="btn btn-white" onClick={() => (user ? setShowMessage(true) : navigate('/login', { state: { from: `/profile/${profile.id}` } }))}>
                   <Icon name="mail" className="w-4 h-4" /> Nachricht
                 </button>
-                <button className="btn btn-secondary" onClick={handleConnect} disabled={connBusy}>
+                <button className="btn text-white border border-white/30 hover:bg-white/10" onClick={handleConnect} disabled={connBusy}>
                   {connState === 'accepted' && <Icon name="check" className="w-4 h-4 text-green-600" />}
                   {connectionLabel[connState]}
                 </button>
@@ -371,15 +373,16 @@ const Profile = () => {
           </div>
         </div>
       </section>
-
+    </div>
+    <div className="page max-w-5xl">
       {isOwn && isManager && !(profile.serviceCities?.length) && (
-        <Notice kind="warn" className="mt-4">
+        <Notice kind="warn" className="mb-4">
           Sie haben noch keine Einsatzgebiete hinterlegt – Eigentümer finden Sie deshalb nicht in der Suche.{' '}
           <button className="underline underline-offset-2 font-medium" onClick={startEdit}>Jetzt ergänzen</button>
         </Notice>
       )}
 
-      <div className="mt-4 grid lg:grid-cols-3 gap-4">
+      <div className="grid lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
           <section className="card p-5 sm:p-6">
             <h2 className="section-title">{isManager ? 'Über die Verwaltung' : 'Über mich'}</h2>
@@ -487,6 +490,7 @@ const Profile = () => {
         </Modal>
       )}
     </div>
+    </>
   );
 };
 

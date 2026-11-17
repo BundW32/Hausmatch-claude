@@ -4,7 +4,7 @@ import { useAuth } from '../services/auth';
 import { analyzeInquiry } from '../services/api';
 import { createInquiry, InquiryInput } from '../services/dataService';
 import { PROPERTY_TYPES, PropertyType, SERVICES } from '../types';
-import { Field, Notice } from './ui/Bits';
+import { Field, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { errorText } from './ui/Toast';
 
@@ -119,12 +119,11 @@ const Wizard = () => {
   const typeLabel = PROPERTY_TYPES.find(t => t.value === form.propertyType)?.label;
 
   return (
+    <>
+    <PageHeader eyebrow="Verwaltung finden" title="Beschreiben Sie Ihr Objekt" width="max-w-2xl">
+      In vier kurzen Schritten. Verwalter sehen Ihre Anfrage ohne Namen und Kontaktdaten.
+    </PageHeader>
     <div className="page max-w-2xl">
-      <header className="mb-6">
-        <p className="eyebrow">Verwaltung finden</p>
-        <h1 className="page-title mt-1">Beschreiben Sie Ihr Objekt</h1>
-        <p className="mt-2 text-slate-600">In vier kurzen Schritten. Verwalter sehen Ihre Anfrage ohne Namen und Kontaktdaten.</p>
-      </header>
 
       <ol className="flex items-center gap-2 mb-6" aria-label="Fortschritt">
         {STEPS.map((label, i) => (
@@ -150,8 +149,8 @@ const Wizard = () => {
               <div className="grid sm:grid-cols-3 gap-2">
                 {PROPERTY_TYPES.map(t => (
                   <label key={t.value} className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-medium cursor-pointer transition-colors ${form.propertyType === t.value ? 'border-brand-600 bg-brand-50 text-brand-900' : 'border-slate-300 text-slate-700 hover:border-slate-400'}`}>
-                    <input type="radio" name="propertyType" className="accent-brand-600 w-4 h-4" checked={form.propertyType === t.value} onChange={() => set('propertyType', t.value as PropertyType)} />
-                    {t.label}
+                    <input type="radio" name="propertyType" className="accent-brand-600 w-4 h-4 shrink-0" checked={form.propertyType === t.value} onChange={() => set('propertyType', t.value as PropertyType)} />
+                    <span className="min-w-0 hyphens-auto [overflow-wrap:anywhere] leading-tight">{t.label}</span>
                   </label>
                 ))}
               </div>
@@ -261,6 +260,7 @@ const Wizard = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

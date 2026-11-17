@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { deleteInquiry, getMyInquiries, setInquiryStatus } from '../services/dataService';
 import { Inquiry } from '../types';
-import { EmptyState, formatDate, LoadingBlock, Notice } from './ui/Bits';
+import { EmptyState, formatDate, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon } from './ui/Icon';
 import { Modal } from './ui/Modal';
 import { errorText, useToast } from './ui/Toast';
@@ -47,14 +47,11 @@ const MyInquiries = () => {
   };
 
   return (
+    <>
+    <PageHeader eyebrow="Eigentümer" title="Meine Anfragen" width="max-w-4xl" actions={<Link to="/wizard" className="btn btn-white"><Icon name="plus" className="w-4 h-4" /> Neue Anfrage</Link>}>
+      Antworten von Verwaltungen erhalten Sie im <Link to="/messages">Postfach</Link>.
+    </PageHeader>
     <div className="page max-w-4xl">
-      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
-        <div>
-          <h1 className="page-title">Meine Anfragen</h1>
-          <p className="mt-2 text-slate-600">Antworten von Verwaltungen erhalten Sie im <Link to="/messages" className="text-brand-700 underline underline-offset-2">Postfach</Link>.</p>
-        </div>
-        <Link to="/wizard" className="btn btn-primary"><Icon name="plus" className="w-4 h-4" /> Neue Anfrage</Link>
-      </header>
 
       {error && <Notice kind="error">{error}</Notice>}
       {!error && items === null && <LoadingBlock />}
@@ -102,6 +99,7 @@ const MyInquiries = () => {
         </Modal>
       )}
     </div>
+    </>
   );
 };
 

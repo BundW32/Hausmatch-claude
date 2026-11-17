@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { PageHeader } from './ui/Bits';
 import { Icon } from './ui/Icon';
 import { Link } from 'react-router-dom';
 
@@ -103,19 +104,8 @@ const Kreditrechner = () => {
   const labelClass = "block text-xs font-bold text-slate-500 mb-1.5";
 
   return (
-    <div className="bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="inline-flex items-center gap-2 mb-4 bg-brand-50 px-4 py-2 rounded-full border border-brand-100">
-            <span className="text-xs font-bold text-brand-700">Finanzplanung</span>
-          </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">Immobilien-Kalkulator</h1>
-          <p className="text-slate-500 font-medium text-sm md:text-base max-w-2xl">
-            Kredit, Rendite und Tilgungsplan — alles in einem Rechner. Vollständige Kostenanalyse inkl. Nebenkosten.
-          </p>
-        </div>
-      </div>
+    <div className="bg-white">
+      <PageHeader eyebrow="Rechner" title="Kredit, Rendite, Tilgung" width="max-w-7xl">Monatsrate, Kaufnebenkosten und Rendite in einem Rechner – mit den Steuersätzen aller Bundesländer.</PageHeader>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Tab Nav */}
@@ -140,7 +130,7 @@ const Kreditrechner = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Input Panel */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-[18px] border border-slate-200 p-6">
               <h2 className="text-sm font-bold text-slate-900 mb-5">Objektdaten</h2>
               <div className="space-y-4">
                 <div>
@@ -184,7 +174,7 @@ const Kreditrechner = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-[18px] border border-slate-200 p-6">
               <h2 className="text-sm font-bold text-slate-900 mb-5">Finanzierung</h2>
               <div className="space-y-4">
                 <div>
@@ -208,7 +198,7 @@ const Kreditrechner = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-[18px] border border-slate-200 p-6">
               <h2 className="text-sm font-bold text-slate-900 mb-5">Miet-Einnahmen</h2>
               <div className="space-y-4">
                 <div>
@@ -251,7 +241,7 @@ const Kreditrechner = () => {
                 </div>
 
                 {/* Darlehen */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="bg-white rounded-[18px] border border-slate-200 p-6">
                   <h3 className="text-xs font-bold text-slate-500 mb-4">Darlehensbedarf</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -279,7 +269,7 @@ const Kreditrechner = () => {
                 </div>
 
                 {/* Nebenkosten Aufschlüsselung */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="bg-white rounded-[18px] border border-slate-200 p-6">
                   <h3 className="text-xs font-bold text-slate-500 mb-4">Nebenkosten im Detail</h3>
                   <div className="space-y-3">
                     {[
@@ -344,7 +334,7 @@ const Kreditrechner = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="bg-white rounded-[18px] border border-slate-200 p-6">
                   <h3 className="text-xs font-bold text-slate-500 mb-4">Einnahmen & Ausgaben / Jahr</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between"><span className="text-sm text-slate-600 font-medium">Mieteinnahmen (kalt)</span><span className="text-sm font-bold text-green-600">+ {formatEuro(jahresmiete)}</span></div>
@@ -382,7 +372,7 @@ const Kreditrechner = () => {
             )}
 
             {tab === 'tilgung' && (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="bg-white rounded-[18px] border border-slate-200 overflow-hidden">
                 <div className="p-5 border-b border-slate-200 flex flex-wrap gap-4">
                   <div>
                     <div className="text-xs text-slate-500 font-medium">Startschuld</div>

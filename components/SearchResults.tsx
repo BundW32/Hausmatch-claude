@@ -4,7 +4,7 @@ import { useAuth } from '../services/auth';
 import { getInquiry, listProfiles } from '../services/dataService';
 import { MatchCriteria, MatchResult, rankManagers } from '../services/matching';
 import { Profile, PROPERTY_TYPES, PropertyType } from '../types';
-import { Avatar, EmptyState, LoadingBlock, Notice } from './ui/Bits';
+import { Avatar, EmptyState, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon } from './ui/Icon';
 import { errorText } from './ui/Toast';
 import MessageModal from './MessageModal';
@@ -22,7 +22,7 @@ const MatchCard: React.FC<{ match: MatchResult; onMessage: () => void; canMessag
           {m.bio && <p className="mt-2 text-sm text-slate-600 line-clamp-2 break-words">{m.bio}</p>}
         </div>
         <div className="w-full sm:w-auto shrink-0 flex sm:block items-baseline gap-2 sm:text-right">
-          <div className="text-2xl font-extrabold text-brand-700 leading-none">{match.score}<span className="text-sm font-semibold"> %</span></div>
+          <div className="font-display text-[34px] font-bold text-brand-600 leading-none tracking-tight">{match.score}&nbsp;%</div>
           <div className="text-xs text-slate-500 sm:mt-1">Übereinstimmung</div>
         </div>
       </div>
@@ -117,18 +117,13 @@ const SearchResults = () => {
   const loading = !error && (managers === null || authLoading);
 
   return (
+    <>
+    <PageHeader eyebrow="Passende Hausverwaltungen" title={criteria ? `Verwaltungen für ${criteria.city}` : 'Hausverwaltung suchen'} width="max-w-4xl">
+      {criteria
+        ? `Sortiert nach Übereinstimmung mit Ihren Angaben${criteria.propertyType ? ` · ${criteria.propertyType}` : ''}${criteria.units ? ` · ${criteria.units} Einheiten` : ''}.`
+        : 'Geben Sie eine Stadt ein oder beschreiben Sie Ihr Objekt.'}
+    </PageHeader>
     <div className="page max-w-4xl">
-      <header className="mb-6">
-        <p className="eyebrow">Passende Hausverwaltungen</p>
-        <h1 className="page-title mt-1">{criteria ? `Verwaltungen für ${criteria.city}` : 'Hausverwaltung suchen'}</h1>
-        {criteria && (
-          <p className="mt-2 text-slate-600">
-            Sortiert nach Übereinstimmung mit Ihren Angaben
-            {criteria.propertyType ? ` · ${criteria.propertyType}` : ''}
-            {criteria.units ? ` · ${criteria.units} Einheiten` : ''}.
-          </p>
-        )}
-      </header>
 
       {isNew && (
         <Notice kind="success" className="mb-6">
@@ -210,6 +205,7 @@ const SearchResults = () => {
         />
       )}
     </div>
+    </>
   );
 };
 

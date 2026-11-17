@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { reopenConsent } from '../services/consent';
+import { PageHeader } from './ui/Bits';
 
 // HINWEIS FÜR DEN BETREIBER:
 // Datenschutzerklärung und AGB sind sorgfältig auf diese App zugeschnittene ENTWÜRFE, aber keine Rechtsberatung.
@@ -258,14 +259,16 @@ const Agb = () => (
 const TITLES = { impressum: 'Impressum', privacy: 'Datenschutzerklärung', agb: 'Allgemeine Geschäftsbedingungen' };
 
 const LegalPage: React.FC<{ type: keyof typeof TITLES }> = ({ type }) => (
+  <>
+  <PageHeader eyebrow="Rechtliches" title={TITLES[type]} width="max-w-3xl" />
   <div className="page max-w-3xl">
-    <h1 className="page-title">{TITLES[type]}</h1>
-    <div className="prose-hm mt-6">
+    <div className="prose-hm">
       {type === 'impressum' && <Impressum />}
       {type === 'privacy' && <Privacy />}
       {type === 'agb' && <Agb />}
     </div>
   </div>
+  </>
 );
 
 export default LegalPage;

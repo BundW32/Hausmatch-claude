@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from './ui/Bits';
 import { Icon, IconName } from './ui/Icon';
 import { Link } from 'react-router-dom';
 
@@ -170,19 +171,8 @@ const Ratgeber = () => {
   const filtered = activeCategory === 'Alle' ? articles : articles.filter(a => a.category === activeCategory);
 
   return (
-    <div className="bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-          <div className="inline-flex items-center gap-2 mb-4 bg-brand-50 px-4 py-2 rounded-full border border-brand-100">
-            <span className="text-xs font-bold text-brand-700">Expertenwissen</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-4">Immobilien-Ratgeber</h1>
-          <p className="text-slate-500 text-lg font-medium max-w-2xl">
-            Praxisnahe Guides zu Recht, Verwaltung, Investment und Förderungen — kompakt und verständlich erklärt.
-          </p>
-        </div>
-      </div>
+    <div className="bg-white">
+      <PageHeader eyebrow="Ratgeber" title="Wissen für Eigentümer" width="max-w-7xl">Praxisnahe Beiträge zu Recht, Verwaltung, Investment und Förderungen – kompakt und verständlich.</PageHeader>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Category Filter */}
@@ -205,7 +195,7 @@ const Ratgeber = () => {
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {filtered.map(article => (
-            <div key={article.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <div key={article.id} className="bg-white rounded-[18px] border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center"><Icon name={article.icon} className="w-6 h-6" /></span>
@@ -267,7 +257,7 @@ const Ratgeber = () => {
         <p className="mt-8 text-sm text-slate-500">Alle Beiträge sind allgemeine Informationen (Stand: November 2026) und ersetzen keine Rechts-, Steuer- oder Finanzierungsberatung im Einzelfall.</p>
 
         {/* CTA Box */}
-        <div className="mt-12 bg-brand-600 rounded-2xl p-8 md:p-10 text-white text-center">
+        <div className="mt-12 bg-brand-600 rounded-[28px] p-8 md:p-12 text-white text-center">
           <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Haben Sie konkrete Fragen?</h3>
           <p className="text-brand-100 font-medium mb-6 max-w-lg mx-auto text-sm md:text-base">
             Der HausMatch-Assistent unten rechts beantwortet allgemeine Fragen. Für Ihr konkretes Objekt finden Sie im Netzwerk die passende Verwaltung.

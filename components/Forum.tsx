@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { createReply, createThread, deleteReply, deleteThread, subscribeReplies, subscribeThread, subscribeThreads } from '../services/dataService';
 import { ForumReply, ForumThread } from '../types';
-import { Avatar, EmptyState, Field, formatDate, LoadingBlock, Notice } from './ui/Bits';
+import { Avatar, EmptyState, Field, formatDate, LoadingBlock, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { Modal } from './ui/Modal';
 import { errorText, useToast } from './ui/Toast';
@@ -83,14 +83,16 @@ const ThreadList = () => {
   };
 
   return (
+    <>
+    <PageHeader
+      eyebrow="Forum"
+      title="Fragen und Erfahrungen"
+      width="max-w-4xl"
+      actions={canWrite ? <button className="btn btn-white" onClick={() => setCreateOpen(true)}><Icon name="plus" className="w-4 h-4" /> Neues Thema</button> : undefined}
+    >
+      Rund um Verwaltung, Recht und Technik – öffentlich lesbar.
+    </PageHeader>
     <div className="page max-w-4xl">
-      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
-        <div>
-          <h1 className="page-title">Forum</h1>
-          <p className="mt-2 text-slate-600">Fragen und Erfahrungen rund um Verwaltung, Recht und Technik.</p>
-        </div>
-        {canWrite && <button className="btn btn-primary" onClick={() => setCreateOpen(true)}><Icon name="plus" className="w-4 h-4" /> Neues Thema</button>}
-      </header>
 
       {!canWrite && <div className="mb-5"><WriteGate from="/forum" /></div>}
 
@@ -172,6 +174,7 @@ const ThreadList = () => {
         </Modal>
       )}
     </div>
+    </>
   );
 };
 
@@ -248,7 +251,7 @@ const ThreadView: React.FC<{ threadId: string }> = ({ threadId }) => {
 
       <article className="card p-5 sm:p-7">
         <span className="badge">{thread.category}</span>
-        <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 break-words">{thread.title}</h1>
+        <h1 className="mt-3 text-3xl sm:text-4xl font-bold leading-[1.05] text-ink break-words">{thread.title}</h1>
         <div className="mt-3 flex items-center gap-3 text-sm text-slate-500">
           <Avatar name={thread.author} size="sm" />
           <span>

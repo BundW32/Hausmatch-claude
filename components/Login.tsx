@@ -4,7 +4,7 @@ import { loginUser, registerUser, resetPassword } from '../services/dataService'
 import { useAuth } from '../services/auth';
 import { resizeImage } from '../services/image';
 import { UserRole } from '../types';
-import { Field, Notice } from './ui/Bits';
+import { Field, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { useToast } from './ui/Toast';
 
@@ -137,11 +137,9 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
       { role: 'manager', icon: 'briefcase', title: 'Ich bin Hausverwaltung', text: 'Sie möchten neue Mandate gewinnen und Anfragen aus Ihrer Region erhalten.', cta: 'Als Verwaltung registrieren' },
     ];
     return (
+      <>
+      <PageHeader eyebrow="Registrieren" title="Konto erstellen" width="max-w-3xl">Wie möchten Sie HausMatch nutzen?</PageHeader>
       <div className="page max-w-3xl">
-        <div className="text-center mb-8">
-          <h1 className="page-title">Konto erstellen</h1>
-          <p className="mt-2 text-slate-600">Wie möchten Sie HausMatch nutzen?</p>
-        </div>
         <div className="grid sm:grid-cols-2 gap-4">
           {roles.map(r => (
             <button
@@ -168,15 +166,16 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
           <button onClick={() => switchView('login')} className="font-semibold text-brand-700 underline underline-offset-2">Zum Login</button>
         </p>
       </div>
+      </>
     );
   }
 
   // --------------------------------------------------------- Passwort-Reset
   if (view === 'reset') {
     return (
-      <div className="page max-w-md">
+      <div className="flex-1 bg-tint"><div className="page max-w-md">
         <div className="card p-6 sm:p-8">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Passwort zurücksetzen</h1>
+          <h1 className="text-3xl font-bold leading-none text-ink">Passwort zurücksetzen</h1>
           {resetSent ? (
             <>
               <Notice kind="success" className="mt-5">
@@ -198,16 +197,16 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
             </form>
           )}
         </div>
-      </div>
+      </div></div>
     );
   }
 
   // ----------------------------------------------------- Login / Registrierung
   const isLogin = view === 'login';
   return (
-    <div className={`page ${isLogin ? 'max-w-md' : 'max-w-xl'}`}>
+    <div className="flex-1 bg-tint"><div className={`page ${isLogin ? 'max-w-md' : 'max-w-xl'}`}>
       <div className="card p-6 sm:p-8 animate-fade-in-up">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold leading-[1.05] text-ink">
           {isLogin ? 'Willkommen zurück' : role === 'manager' ? 'Konto für Ihre Hausverwaltung' : 'Konto als Eigentümer:in'}
         </h1>
         <p className="mt-1 text-sm text-slate-600">
@@ -303,7 +302,7 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
           )}
         </p>
       </div>
-    </div>
+    </div></div>
   );
 };
 

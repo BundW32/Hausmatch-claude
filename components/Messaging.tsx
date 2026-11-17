@@ -112,7 +112,7 @@ const Messaging = () => {
       {/* Unterhaltungen */}
       <aside className={`${active ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[340px] md:shrink-0 border-r border-slate-200 min-h-0`}>
         <div className="p-4 border-b border-slate-200">
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Postfach</h1>
+          <h1 className="text-2xl font-bold leading-none text-ink">Postfach</h1>
           <label htmlFor="chat-search" className="sr-only">Unterhaltungen durchsuchen</label>
           <div className="relative mt-3">
             <Icon name="search" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />

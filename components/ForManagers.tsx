@@ -19,18 +19,18 @@ const ForManagers = () => {
   const cta = user?.role === 'manager' ? { to: '/dashboard', label: 'Zum Lead-Center' } : { to: '/register', label: 'Kostenlos registrieren' };
   return (
     <div>
-      <section className="bg-slate-900 text-white">
+      <section className="bg-navy-grid text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-300">Für Hausverwaltungen</p>
-          <h1 className="mt-2 text-3xl md:text-5xl font-extrabold tracking-tight max-w-3xl">Neue Mandate von Eigentümern, die aktiv suchen</h1>
-          <p className="mt-4 text-lg text-slate-300 max-w-2xl">
+          <p className="font-mono text-xs uppercase tracking-[0.06em] text-[#93b4ff]">Für Hausverwaltungen</p>
+          <h1 className="mt-4 display text-4xl md:text-6xl max-w-3xl">Neue Mandate von Eigentümern, die aktiv suchen</h1>
+          <p className="mt-5 text-lg text-[#d5e0ff] max-w-2xl">
             Auf HausMatch beschreiben Eigentümer ihr Objekt und suchen eine Verwaltung. Sie sehen die Anfragen aus Ihrer Region und melden sich, wenn es passt.
           </p>
           <div className="mt-7 flex flex-col sm:flex-row gap-3">
-            <Link to={cta.to} className="btn btn-primary btn-lg">{cta.label} <Icon name="arrowRight" className="w-4 h-4" /></Link>
+            <Link to={cta.to} className="btn btn-white btn-lg">{cta.label} <Icon name="arrowRight" className="w-4 h-4" /></Link>
             <Link to="/contact" className="btn btn-lg bg-white/10 text-white hover:bg-white/20">Fragen? Kontakt</Link>
           </div>
-          <p className="mt-4 text-sm text-slate-400">Die Nutzung ist derzeit kostenlos.</p>
+          <p className="mt-4 text-sm text-[#b3c5f5]">Die Nutzung ist derzeit kostenlos.</p>
         </div>
       </section>
 

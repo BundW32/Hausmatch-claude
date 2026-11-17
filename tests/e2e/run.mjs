@@ -95,8 +95,8 @@ try {
   await page.getByRole('button', { name: 'Nur notwendige' }).click();
   check('Einwilligungsbanner lässt sich schließen', (await page.getByRole('region', { name: 'Cookie-Einstellungen' }).count()) === 0);
   await shot(page, '01-start');
-  await page.getByLabel('Stadt des Objekts').fill('Essen');
-  await page.getByRole('button', { name: /Verwaltung finden/ }).click();
+  await page.getByLabel('Stadt des Objekts').first().fill('Essen');
+  await page.getByRole('button', { name: /Verwaltung finden/ }).first().click();
   await page.getByRole('heading', { name: 'Beschreiben Sie Ihr Objekt' }).waitFor();
   check('Stadt wird in den Wizard übernommen', (await page.getByLabel('Stadt des Objekts').inputValue()) === 'Essen');
 

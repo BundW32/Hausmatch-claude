@@ -42,10 +42,10 @@ const useUnreadCount = () => {
   return count;
 };
 
-const Logo = () => (
+const Logo = ({ light = false }: { light?: boolean }) => (
   <Link to="/" className="flex items-center gap-2.5" aria-label="HausMatch – zur Startseite">
-    <span className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" aria-hidden="true">H</span>
-    <span className="text-lg font-extrabold tracking-tight text-slate-900">HausMatch</span>
+    <span className="w-[34px] h-[34px] bg-brand-600 rounded-[9px] flex items-center justify-center text-white font-display font-extrabold text-[17px]" aria-hidden="true">H</span>
+    <span className={`font-display text-[22px] font-bold tracking-tight ${light ? 'text-white' : 'text-ink'}`}>HausMatch</span>
   </Link>
 );
 
@@ -78,20 +78,20 @@ const Navbar = () => {
   ];
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'text-brand-700 bg-brand-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`;
+    `relative px-3 py-2 rounded-lg text-[15px] transition-colors ${isActive ? 'text-white bg-white/10' : 'text-navy-soft hover:text-white hover:bg-white/10'}`;
 
   const Badge = ({ n }: { n?: number }) =>
     n ? (
-      <span className="ml-1.5 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-brand-600 text-white text-xs font-semibold" aria-label={`${n} ungelesen`}>
+      <span className="ml-1.5 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-white text-navy text-xs font-semibold" aria-label={`${n} ungelesen`}>
         {n > 99 ? '99+' : n}
       </span>
     ) : null;
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 h-16">
-      <a href="#inhalt" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 btn btn-dark btn-sm z-10">Zum Inhalt springen</a>
+    <header className="fixed top-0 inset-x-0 z-50 bg-navy text-white border-b border-white/10 h-16">
+      <a href="#inhalt" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 btn btn-white btn-sm z-10">Zum Inhalt springen</a>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4" aria-label="Hauptnavigation">
-        <Logo />
+        <Logo light />
 
         <div className="hidden lg:flex items-center gap-1">
           {links.map(l => (
@@ -105,19 +105,19 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center gap-2">
           {!user ? (
             <>
-              <Link to="/login" className="btn btn-ghost btn-sm">Anmelden</Link>
-              <Link to="/register" className="btn btn-primary btn-sm">Registrieren</Link>
+              <Link to="/login" className="btn btn-sm text-white hover:bg-white/10">Anmelden</Link>
+              <Link to="/register" className="btn btn-white btn-sm">Registrieren</Link>
             </>
           ) : (
             <>
-              <Link to="/profile" className="flex items-center gap-2.5 rounded-lg px-2 py-1 hover:bg-slate-100 transition-colors">
+              <Link to="/profile" className="flex items-center gap-2.5 rounded-lg px-2 py-1 hover:bg-white/10 transition-colors">
                 <Avatar name={user.name} src={user.avatar} size="sm" />
                 <span className="text-left leading-tight">
-                  <span className="block text-sm font-semibold text-slate-900 max-w-36 truncate">{user.name}</span>
-                  <span className="block text-xs text-slate-500">{user.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}</span>
+                  <span className="block text-sm font-semibold text-white max-w-36 truncate">{user.name}</span>
+                  <span className="block text-xs text-navy-soft">{user.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}</span>
                 </span>
               </Link>
-              <button onClick={logout} className="btn btn-ghost btn-sm !px-2" aria-label="Abmelden" title="Abmelden">
+              <button onClick={logout} className="btn btn-sm !px-2 text-navy-soft hover:text-white hover:bg-white/10" aria-label="Abmelden" title="Abmelden">
                 <Icon name="logout" />
               </button>
             </>
@@ -125,38 +125,38 @@ const Navbar = () => {
         </div>
 
         <button
-          className="lg:hidden btn btn-ghost btn-sm !px-2 relative"
+          className="lg:hidden btn btn-sm !px-2 relative text-white hover:bg-white/10"
           onClick={() => setMobileOpen(o => !o)}
           aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
         >
           <Icon name={mobileOpen ? 'x' : 'menu'} className="w-6 h-6" />
-          {!mobileOpen && unread > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-brand-600 border-2 border-white" />}
+          {!mobileOpen && unread > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-navy" />}
         </button>
       </nav>
 
       {mobileOpen && (
-        <div id="mobile-menu" className="lg:hidden bg-white border-b border-slate-200 shadow-lg px-4 py-3 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto animate-fade-in">
+        <div id="mobile-menu" className="lg:hidden bg-navy border-b border-white/10 shadow-lg px-4 py-3 space-y-1 max-h-[calc(100dvh-4rem)] overflow-y-auto animate-fade-in">
           {links.map(l => (
             <NavLink key={l.to} to={l.to} className={p => `${linkClass(p)} flex items-center justify-between !py-3 text-base`}>
               {l.label}
               <Badge n={l.badge} />
             </NavLink>
           ))}
-          <div className="pt-3 mt-2 border-t border-slate-200 flex flex-col gap-2">
+          <div className="pt-3 mt-2 border-t border-white/15 flex flex-col gap-2">
             {!user ? (
               <>
-                <Link to="/login" className="btn btn-secondary">Anmelden</Link>
-                <Link to="/register" className="btn btn-primary">Kostenlos registrieren</Link>
+                <Link to="/login" className="btn text-white border border-white/30 hover:bg-white/10">Anmelden</Link>
+                <Link to="/register" className="btn btn-white">Kostenlos registrieren</Link>
               </>
             ) : (
               <>
-                <Link to="/profile" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100">
+                <Link to="/profile" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10">
                   <Avatar name={user.name} src={user.avatar} size="sm" />
-                  <span className="text-sm font-semibold text-slate-900 truncate">{user.name} · Profil</span>
+                  <span className="text-sm font-semibold text-white truncate">{user.name} · Profil</span>
                 </Link>
-                <button onClick={logout} className="btn btn-danger">Abmelden</button>
+                <button onClick={logout} className="btn text-white border border-white/30 hover:bg-white/10">Abmelden</button>
               </>
             )}
           </div>

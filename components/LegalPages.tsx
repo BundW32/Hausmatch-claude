@@ -65,6 +65,11 @@ const Impressum = () => (
     <h2>Verbraucherstreitbeilegung</h2>
     <p>Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
 
+    <h2>Datenquellen</h2>
+    <p>
+      Ortsnamen und Postleitzahlen: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a>, Lizenz CC BY 4.0.
+    </p>
+
     <h2>Haftung für Inhalte der Nutzer</h2>
     <p>
       Profile, Forenbeiträge und Nachrichten stammen von den jeweiligen Nutzern. Wir machen uns diese Inhalte nicht zu eigen. Hinweise auf

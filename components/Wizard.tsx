@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { analyzeInquiry } from '../services/api';
-import { createInquiry, InquiryInput } from '../services/dataService';
+import { createInquiry, getMyInquiries, InquiryInput } from '../services/dataService';
+import { findPlace, loadPlaces, suggestPlaces } from '../services/places';
+import { normalizeCity } from '../services/matching';
+import { track } from '../services/firebase';
+import { CityInput, cityErrorText } from './ui/CityInput';
 import { PROPERTY_TYPES, PropertyType, SERVICES } from '../types';
 import { Field, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
@@ -43,7 +47,8 @@ const validateStep = (step: number, f: InquiryInput): Errors => {
     else if (f.units > 100000) e.units = 'Bitte prüfen Sie die Anzahl der Einheiten.';
   }
   if (step === 1) {
-    if (f.buildingAge && !/^\d{4}$/.test(f.buildingAge.trim())) e.buildingAge = 'Bitte vierstellig angeben, z. B. 1985 – oder leer lassen.';
+    const year = Number(f.buildingAge.trim());
+    if (f.buildingAge && (!/^\d{4}$/.test(f.buildingAge.trim()) || year < 1500 || year > new Date().getFullYear() + 2)) e.buildingAge = 'Bitte ein plausibles Baujahr vierstellig angeben, z. B. 1985 – oder leer lassen.';
   }
   if (step === 2) {
     if (f.description.trim().length < 20) e.description = 'Bitte beschreiben Sie Ihr Anliegen in mindestens 20 Zeichen.';
@@ -78,10 +83,29 @@ const Wizard = () => {
     setErrors(e => ({ ...e, [key]: undefined }));
   };
 
-  const next = () => {
+  /** Prüft die Stadt gegen das Ortsverzeichnis und übernimmt die amtliche Schreibweise. */
+  const checkCity = async (): Promise<string | null> => {
+    try {
+      const places = await loadPlaces();
+      const place = findPlace(places, form.city);
+      if (!place) {
+        setErrors(e => ({ ...e, city: cityErrorText(form.city, suggestPlaces(places, form.city)) }));
+        return null;
+      }
+      if (place.name !== form.city) setForm(f => ({ ...f, city: place.name }));
+      return place.name;
+    } catch {
+      return form.city.trim(); // Verzeichnis nicht ladbar – Eingabe nicht blockieren
+    }
+  };
+
+  const next = async () => {
     const e = validateStep(step, form);
     setErrors(e);
-    if (Object.keys(e).length === 0) setStep(s => s + 1);
+    if (Object.keys(e).length > 0) return;
+    if (step === 0 && !(await checkCity())) return;
+    track('wizard_step', { step: step + 2 });
+    setStep(s => s + 1);
   };
 
   const toggleService = (s: string) =>
@@ -100,9 +124,34 @@ const Wizard = () => {
     setSubmitting(true);
     setSubmitError('');
     try {
+      const city = await checkCity();
+      if (!city) {
+        setStep(0);
+        setSubmitting(false);
+        return;
+      }
+      // Doppelte und massenhafte Anfragen vermeiden
+      const mine = (await getMyInquiries(user.id)).filter(i => i.status === 'offen');
+      const same = mine.find(i => i.cityLower === normalizeCity(city) && i.propertyType === form.propertyType && i.units === form.units);
+      if (same) {
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch {
+          /* ignore */
+        }
+        navigate(`/search-results?inquiry=${same.id}&doppelt=1`, { replace: true });
+        return;
+      }
+      if (mine.length >= 10) {
+        setSubmitError('Sie haben bereits 10 aktive Anfragen. Bitte schließen Sie zuerst eine unter „Meine Anfragen“.');
+        setSubmitting(false);
+        return;
+      }
       // Die KI-Einschätzung ist ein Zusatz für Verwalter – die Anfrage wird auch ohne sie gespeichert.
-      const analysis = await analyzeInquiry(form);
-      const id = await createInquiry(user.id, form, analysis);
+      const input = { ...form, city };
+      const analysis = await analyzeInquiry(input);
+      const id = await createInquiry(user.id, input, analysis);
+      track('inquiry_created');
       try {
         localStorage.removeItem(DRAFT_KEY);
       } catch {
@@ -124,6 +173,11 @@ const Wizard = () => {
       In vier kurzen Schritten. Verwalter sehen Ihre Anfrage ohne Namen und Kontaktdaten.
     </PageHeader>
     <div className="page max-w-2xl">
+      {user?.role === 'manager' && (
+        <Notice kind="warn" className="mb-6">
+          Sie sind als Hausverwaltung angemeldet. Anfragen können nur Eigentümer-Konten stellen – Ihre Anfragen von Eigentümern finden Sie im <Link to="/dashboard" className="underline underline-offset-2 font-medium">Lead-Center</Link>.
+        </Notice>
+      )}
 
       <ol className="flex items-center gap-2 mb-6" aria-label="Fortschritt">
         {STEPS.map((label, i) => (
@@ -138,8 +192,8 @@ const Wizard = () => {
       <div className="card p-5 sm:p-8">
         {step === 0 && (
           <div className="space-y-5 animate-fade-in">
-            <Field label="Stadt des Objekts" htmlFor="wz-city" error={errors.city}>
-              <input id="wz-city" className="input" autoComplete="address-level2" maxLength={80} value={form.city} onChange={e => set('city', e.target.value)} placeholder="z. B. Essen" {...invalid('city')} />
+            <Field label="Stadt des Objekts" htmlFor="wz-city" error={errors.city} hint="Ortsname oder Postleitzahl. Vorschläge erscheinen beim Tippen.">
+              <CityInput id="wz-city" value={form.city} onChange={v => set('city', v)} placeholder="Ort oder Postleitzahl" invalid={!!errors.city} describedBy={errors.city ? 'wz-city-error' : undefined} />
             </Field>
             <Field label="Anzahl der Einheiten" htmlFor="wz-units" error={errors.units} hint="Wohnungen und Gewerbeeinheiten zusammen.">
               <input id="wz-units" type="number" inputMode="numeric" min={1} className="input" value={Number.isFinite(form.units) ? form.units : ''} onChange={e => set('units', e.target.value === '' ? NaN : Math.round(Number(e.target.value)))} {...invalid('units')} />

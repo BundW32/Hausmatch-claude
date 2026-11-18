@@ -10,6 +10,8 @@ import { Icon, Spinner } from './ui/Icon';
 import { Modal } from './ui/Modal';
 import { errorText, useToast } from './ui/Toast';
 import MessageModal from './MessageModal';
+import { CityInput, cityErrorText } from './ui/CityInput';
+import { findPlace, loadPlaces, suggestPlaces } from '../services/places';
 
 const DAYS: { key: keyof OpeningHours; label: string }[] = [
   { key: 'mon', label: 'Montag' },
@@ -153,6 +155,56 @@ const Profile = () => {
       setFormError('„Einheiten von“ darf nicht größer sein als „bis“.');
       return;
     }
+    if (form.name.trim().length < 2) {
+      setFormError('Der Name ist zu kurz.');
+      return;
+    }
+    // Orte gegen das Ortsverzeichnis prüfen und in amtlicher Schreibweise speichern
+    let location = form.location.trim();
+    let cities = form.serviceCities.split(/[,;\n]/).map(c => c.trim()).filter(Boolean);
+    const places = await loadPlaces().catch(() => null);
+    if (places) {
+      if (location) {
+        const place = findPlace(places, location);
+        if (!place) {
+          setFormError(`${isManager ? 'Sitz' : 'Ort'}: ${cityErrorText(location, suggestPlaces(places, location))}`);
+          return;
+        }
+        location = place.name;
+      }
+      if (isManager) {
+        const unknown = cities.filter(c => !findPlace(places, c));
+        if (unknown.length > 0) {
+          setFormError(`Einsatzgebiete: ${unknown.map(c => `„${c}“`).join(', ')} ${unknown.length === 1 ? 'kennen' : 'kennen'} wir nicht. Bitte Schreibweise prüfen oder die Postleitzahl eingeben.`);
+          return;
+        }
+        cities = [...new Set(cities.map(c => findPlace(places, c)!.name))];
+      }
+    }
+    const vatId = form.vatId.replace(/\s/g, '').toUpperCase();
+    const year = Number(form.foundedYear) || 0;
+    if (isManager) {
+      if (form.phone.trim() && !/^\+?[\d\s()/-]{6,25}$/.test(form.phone.trim())) {
+        setFormError('Bitte prüfen Sie die Telefonnummer (nur Ziffern, Leerzeichen, +, /, -, Klammern).');
+        return;
+      }
+      if (form.website.trim() && (!safeUrl(form.website.trim()) || !/\.[a-z]{2,}/i.test(form.website))) {
+        setFormError('Bitte prüfen Sie die Website-Adresse, z. B. www.beispiel.de.');
+        return;
+      }
+      if (vatId && !/^DE\d{9}$/.test(vatId)) {
+        setFormError('Die USt-IdNr. hat das Format DE und neun Ziffern, z. B. DE123456789.');
+        return;
+      }
+      if (year && (year < 1800 || year > new Date().getFullYear())) {
+        setFormError('Bitte prüfen Sie das Gründungsjahr.');
+        return;
+      }
+      if ((Number(form.teamSize) || 0) < 0 || min < 0 || max < 0) {
+        setFormError('Zahlenangaben dürfen nicht negativ sein.');
+        return;
+      }
+    }
     setSaving(true);
     setFormError('');
     try {
@@ -160,17 +212,17 @@ const Profile = () => {
         name: form.name,
         avatar: form.avatar,
         bio: form.bio,
-        location: form.location,
+        location,
         ...(isManager
           ? {
               phone: form.phone,
               website: form.website,
-              vatId: form.vatId,
+              vatId,
               teamSize: Number(form.teamSize) || 0,
               foundedYear: Number(form.foundedYear) || 0,
               minUnits: min,
               maxUnits: max,
-              serviceCities: form.serviceCities.split(/[,;\n]/),
+              serviceCities: cities,
               propertyTypes: form.propertyTypes,
               openingHours: Object.fromEntries(Object.entries(form.openingHours).filter(([, v]) => v && v.trim()).map(([k, v]) => [k, v!.trim().slice(0, 40)])),
             }
@@ -255,7 +307,7 @@ const Profile = () => {
                 <input id="pf-name" className="input" required maxLength={80} value={form.name} onChange={e => setField('name', e.target.value)} />
               </Field>
               <Field label={isManager ? 'Sitz (Ort)' : 'Ort (optional)'} htmlFor="pf-location">
-                <input id="pf-location" className="input" maxLength={120} value={form.location} onChange={e => setField('location', e.target.value)} placeholder="z. B. Gladbeck" />
+                <CityInput id="pf-location" name="location" value={form.location} onChange={v => setField('location', v)} placeholder="Ort oder Postleitzahl" />
               </Field>
             </div>
             <Field label={isManager ? 'Über Ihre Verwaltung' : 'Über mich (optional)'} htmlFor="pf-bio" hint={`${form.bio.length} / 1500 Zeichen`}>
@@ -270,7 +322,7 @@ const Profile = () => {
                   <h2 className="section-title">Für welche Objekte sind Sie die richtige Verwaltung?</h2>
                   <p className="text-sm text-slate-500 mt-1">Aus diesen Angaben entsteht das Matching mit den Anfragen der Eigentümer.</p>
                 </div>
-                <Field label="Einsatzgebiete (Städte)" htmlFor="pf-cities" hint="Mehrere Städte mit Komma trennen, z. B. Essen, Gladbeck, Bottrop.">
+                <Field label="Einsatzgebiete (Städte)" htmlFor="pf-cities" hint="Mehrere Orte mit Komma trennen, z. B. Essen, Gladbeck, Bottrop. Jeder Ort wird beim Speichern geprüft.">
                   <input id="pf-cities" className="input" value={form.serviceCities} onChange={e => setField('serviceCities', e.target.value)} />
                 </Field>
                 <fieldset>

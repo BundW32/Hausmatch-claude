@@ -7,6 +7,7 @@ import { UserRole } from '../types';
 import { Field, Notice, PageHeader } from './ui/Bits';
 import { Icon, Spinner } from './ui/Icon';
 import { useToast } from './ui/Toast';
+import { track } from '../services/firebase';
 
 type View = 'login' | 'role_select' | 'register_form' | 'reset';
 
@@ -94,6 +95,10 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (name.trim().length < 2) {
+      setError('Bitte geben Sie Ihren Namen bzw. den Namen der Hausverwaltung an.');
+      return;
+    }
     if (!accepted) {
       setError('Bitte stimmen Sie den AGB und der Datenschutzerklärung zu.');
       return;
@@ -101,7 +106,8 @@ const Login: React.FC<{ initialView?: View }> = ({ initialView = 'login' }) => {
     setBusy(true);
     setError('');
     try {
-      await registerUser(email.trim(), password, name, role, avatar, bio);
+      await registerUser(email.trim(), password, name.trim(), role, avatar, bio);
+      track('sign_up', { role });
       await refreshUser();
       toast('Konto erstellt. Wir haben Ihnen eine E-Mail zur Bestätigung geschickt.', 'success');
       navigate(destination(role), { replace: true });

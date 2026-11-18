@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 const formatZahl = (v: number, stellen: number) =>
   v.toLocaleString('de-DE', { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
 
+const clamp = (v: string, min: number, max: number) => Math.min(Math.max(Number(v) || 0, min), max);
+
 const formatEuro = (v: number) =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
 
@@ -136,14 +138,14 @@ const Kreditrechner = () => {
                 <div>
                   <label htmlFor="kr-1" className={labelClass}>Kaufpreis</label>
                   <div className="relative">
-                    <input id="kr-1" type="number" className={inputClass} value={kaufpreis} onChange={e => setKaufpreis(+e.target.value)} step={10000} />
+                    <input id="kr-1" type="number" min={0} inputMode="decimal" className={inputClass} value={kaufpreis} onChange={e => setKaufpreis(clamp(e.target.value, 0, 1000000000))} step={10000} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-2" className={labelClass}>Eigenkapital</label>
                   <div className="relative">
-                    <input id="kr-2" type="number" className={inputClass} value={eigenkapital} onChange={e => setEigenkapital(+e.target.value)} step={5000} />
+                    <input id="kr-2" type="number" min={0} inputMode="decimal" className={inputClass} value={eigenkapital} onChange={e => setEigenkapital(clamp(e.target.value, 0, 1000000000))} step={5000} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                   <div className="mt-1 text-xs text-slate-500 font-medium">
@@ -180,20 +182,20 @@ const Kreditrechner = () => {
                 <div>
                   <label htmlFor="kr-4" className={labelClass}>Zinssatz p.a.</label>
                   <div className="relative">
-                    <input id="kr-4" type="number" className={inputClass} value={zins} onChange={e => setZins(+e.target.value)} step={0.1} min={0.1} max={15} />
+                    <input id="kr-4" type="number" inputMode="decimal" className={inputClass} value={zins} onChange={e => setZins(clamp(e.target.value, 0, 25))} step={0.1} min={0.1} max={15} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-5" className={labelClass}>Anfangstilgung p.a.</label>
                   <div className="relative">
-                    <input id="kr-5" type="number" className={inputClass} value={tilgung} onChange={e => setTilgung(+e.target.value)} step={0.1} min={0.5} max={10} />
+                    <input id="kr-5" type="number" inputMode="decimal" className={inputClass} value={tilgung} onChange={e => setTilgung(clamp(e.target.value, 0, 25))} step={0.1} min={0.5} max={10} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-6" className={labelClass}>Laufzeit (Jahre)</label>
-                  <input id="kr-6" type="number" className={inputClass} value={laufzeit} onChange={e => setLaufzeit(+e.target.value)} step={1} min={5} max={40} />
+                  <input id="kr-6" type="number" inputMode="numeric" className={inputClass} value={laufzeit} onChange={e => setLaufzeit(clamp(e.target.value, 1, 40))} step={1} min={5} max={40} />
                 </div>
               </div>
             </div>
@@ -204,7 +206,7 @@ const Kreditrechner = () => {
                 <div>
                   <label htmlFor="kr-7" className={labelClass}>Jahresmiete (kalt)</label>
                   <div className="relative">
-                    <input id="kr-7" type="number" className={inputClass} value={jahresmiete} onChange={e => setJahresmiete(+e.target.value)} step={600} />
+                    <input id="kr-7" type="number" min={0} inputMode="decimal" className={inputClass} value={jahresmiete} onChange={e => setJahresmiete(clamp(e.target.value, 0, 100000000))} step={600} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                   <div className="mt-1 text-xs text-slate-500 font-medium">= {formatEuro(jahresmiete / 12)} / Monat</div>
@@ -212,14 +214,14 @@ const Kreditrechner = () => {
                 <div>
                   <label htmlFor="kr-8" className={labelClass}>Verwaltungskosten / Jahr</label>
                   <div className="relative">
-                    <input id="kr-8" type="number" className={inputClass} value={verwaltungKosten} onChange={e => setVerwaltungKosten(+e.target.value)} step={100} />
+                    <input id="kr-8" type="number" min={0} inputMode="decimal" className={inputClass} value={verwaltungKosten} onChange={e => setVerwaltungKosten(clamp(e.target.value, 0, 10000000))} step={100} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="kr-9" className={labelClass}>Instandhaltung / Jahr</label>
                   <div className="relative">
-                    <input id="kr-9" type="number" className={inputClass} value={instandhaltung} onChange={e => setInstandhaltung(+e.target.value)} step={100} />
+                    <input id="kr-9" type="number" min={0} inputMode="decimal" className={inputClass} value={instandhaltung} onChange={e => setInstandhaltung(clamp(e.target.value, 0, 10000000))} step={100} />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">€</span>
                   </div>
                 </div>

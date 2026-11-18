@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Icon } from './ui/Icon';
+import { CityInput, cityErrorText } from './ui/CityInput';
+import { findPlace, loadPlaces, suggestPlaces } from '../services/places';
+import { track } from '../services/firebase';
 
 // Startseite. Aufbau nach dem 11-Elemente-Raster für Landingpages:
 // Logo (Kopfzeile) · Titel + Untertitel · Haupt-CTA · Vertrauensbelege · Produktbild (Match-Motiv) ·
@@ -41,27 +44,49 @@ const Label: React.FC<{ children: React.ReactNode; light?: boolean }> = ({ child
 /** Stadtsuche – führt mit der eingegebenen Stadt ins Objekt-Formular. */
 const CitySearch: React.FC<{ id: string; placeholder: string; dark?: boolean }> = ({ id, placeholder, dark }) => {
   const [city, setCity] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const submit = (e: React.FormEvent) => {
+  const go = (name: string) => {
+    track('funnel_start', { with_city: !!name });
+    navigate(name ? `/wizard?city=${encodeURIComponent(name)}` : '/wizard');
+  };
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(city.trim() ? `/wizard?city=${encodeURIComponent(city.trim())}` : '/wizard');
+    const raw = city.trim();
+    if (!raw) return go('');
+    try {
+      const places = await loadPlaces();
+      const place = findPlace(places, raw);
+      if (place) return go(place.name);
+      setError(cityErrorText(raw, suggestPlaces(places, raw)));
+    } catch {
+      // Ortsverzeichnis nicht ladbar: Eingabe mitnehmen, das Formular prüft sie erneut.
+      go(raw);
+    }
   };
   return (
-    <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-[0_24px_60px_-18px_rgba(0,8,40,0.7)]">
-      <label htmlFor={id} className="sr-only">Stadt des Objekts</label>
-      <input
-        id={id}
-        name="city"
-        autoComplete="address-level2"
-        className="flex-1 min-w-0 h-[54px] rounded-[10px] px-4 text-[17px] text-ink placeholder-slate-400 bg-transparent focus:outline-none focus:ring-2 focus:ring-brand-100"
-        placeholder={placeholder}
-        value={city}
-        onChange={e => setCity(e.target.value)}
-      />
-      <button type="submit" className={`btn h-[54px] px-6 text-base rounded-[10px] ${dark ? 'btn-dark' : 'btn-primary'}`}>
-        Verwaltung finden <Icon name="arrowRight" className="w-[18px] h-[18px]" />
-      </button>
-    </form>
+    <div>
+      <form onSubmit={submit} noValidate className="flex flex-col sm:flex-row gap-2 p-2 bg-white rounded-2xl shadow-[0_24px_60px_-18px_rgba(0,8,40,0.7)]">
+        <label htmlFor={id} className="sr-only">Stadt des Objekts</label>
+        <CityInput
+          id={id}
+          value={city}
+          onChange={v => {
+            setCity(v);
+            setError('');
+          }}
+          onPick={p => go(p.name)}
+          placeholder={placeholder}
+          invalid={!!error}
+          describedBy={error ? `${id}-error` : undefined}
+          className="w-full h-[54px] rounded-[10px] px-4 text-[17px] text-ink placeholder-slate-400 bg-transparent focus:outline-none focus:ring-2 focus:ring-brand-100"
+        />
+        <button type="submit" className={`btn h-[54px] px-6 text-base rounded-[10px] ${dark ? 'btn-dark' : 'btn-primary'}`}>
+          Verwaltung finden <Icon name="arrowRight" className="w-[18px] h-[18px]" />
+        </button>
+      </form>
+      {error && <p id={`${id}-error`} role="alert" className="mt-3 ml-2 text-[15px] font-medium text-white bg-red-600/90 rounded-lg px-3 py-2">{error}</p>}
+    </div>
   );
 };
 
@@ -147,7 +172,7 @@ const LandingHome = () => {
               Beschreiben Sie Ihr Objekt. HausMatch zeigt, welche Hausverwaltungen in Ihrer Stadt dafür infrage kommen – mit Begründung zu jedem Treffer.
             </p>
             <div className="mt-9 max-w-[520px]">
-              <CitySearch id="city-input" placeholder="Stadt, z. B. Essen" />
+              <CitySearch id="city-input" placeholder="Stadt oder Postleitzahl" />
             </div>
             <p className="mt-4 text-[15px] text-[#b3c5f5]">Kostenlos · etwa zwei Minuten · Ihre Kontaktdaten bleiben bei Ihnen</p>
           </div>
@@ -354,7 +379,7 @@ const LandingHome = () => {
         <div className="bg-brand-600 text-white rounded-[32px] px-6 py-12 sm:px-14 sm:pt-[72px] sm:pb-16 flex flex-wrap items-end justify-between gap-x-12 gap-y-9">
           <h2 className="flex-1 basis-[420px] min-w-0 display text-[clamp(2.75rem,7.1vw,5.75rem)] leading-[0.96]">Wo liegt Ihr Objekt?</h2>
           <div className="flex-none w-full sm:w-[400px]">
-            <CitySearch id="city-input-bottom" placeholder="z. B. Essen" dark />
+            <CitySearch id="city-input-bottom" placeholder="Stadt oder PLZ" dark />
             <p className="mt-3.5 ml-2 text-[15px] text-brand-50">Kostenlos, anonym, etwa zwei Minuten.</p>
           </div>
         </div>

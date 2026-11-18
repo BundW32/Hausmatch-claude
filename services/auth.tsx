@@ -53,6 +53,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = useCallback(async () => {
     await logoutUser();
     setUser(null);
+    // Der Entwurf des Objekt-Formulars gehört zum abgemeldeten Nutzer – nicht dem nächsten am selben Gerät zeigen.
+    try {
+      localStorage.removeItem('hm_wizard_draft_v1');
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const refreshUser = useCallback(async () => {

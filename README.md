@@ -11,6 +11,7 @@ React + Vite + Tailwind im Browser, Firebase (Auth, Firestore) als Datenbank, Ve
 | `services/` | Firebase-Anbindung (`dataService.ts`), Anmeldung (`auth.tsx`), Matching (`matching.ts`), Einwilligung (`consent.ts`) |
 | `api/` | Vercel-Serverfunktionen: `chat` (Assistent), `analyze` (Einschätzung einer Anfrage), `blog` (Branchen-News) |
 | `firestore.rules`, `firestore.indexes.json` | Zugriffsregeln und Indizes der Datenbank |
+| `data/places.json`, `services/places.ts` | Ortsverzeichnis (Orte und Postleitzahlen, GeoNames CC BY 4.0) für das geprüfte Stadtfeld; neu erzeugen mit `scripts/build-places.mjs` |
 | `tests/` | Regeltests, Tests der Serverfunktionen, End-to-End-Durchlauf |
 
 ## Einmalige Einrichtung für den Livebetrieb

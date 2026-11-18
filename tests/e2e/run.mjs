@@ -103,7 +103,14 @@ try {
   await page.getByLabel('Stadt des Objekts').fill('');
   await page.getByRole('button', { name: 'Weiter' }).click();
   check('Pflichtfeld wird direkt im Schritt geprüft', (await text(page)).includes('Bitte geben Sie die Stadt an'));
-  await page.getByLabel('Stadt des Objekts').fill('Essen');
+  await page.getByLabel('Stadt des Objekts').fill('Xyzstadt');
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await page.getByText('„Xyzstadt“ kennen wir nicht').waitFor();
+  check('Unbekannter Ort wird abgelehnt', true);
+  await page.getByLabel('Stadt des Objekts').fill('45127');
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await page.getByRole('button', { name: 'Zurück' }).click();
+  check('Postleitzahl wird in den Ortsnamen umgewandelt', (await page.getByLabel('Stadt des Objekts').inputValue()) === 'Essen');
   await page.getByLabel('Anzahl der Einheiten').fill('12');
   await page.getByRole('button', { name: 'Weiter' }).click();
   await page.getByLabel('Baujahr (optional)').fill('1985');

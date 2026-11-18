@@ -27,14 +27,31 @@ if (useEmulators) {
 }
 
 let analyticsStarted = false;
+let logEventFn: ((name: string, params?: Record<string, unknown>) => void) | null = null;
 /** Startet Google Analytics – wird ausschließlich nach Einwilligung aufgerufen (siehe services/consent.ts). */
 export const startAnalytics = async () => {
   if (analyticsStarted || useEmulators) return;
   analyticsStarted = true;
   try {
     const { getAnalytics, isSupported } = await import('firebase/analytics');
-    if (await isSupported()) getAnalytics(app);
+    const { logEvent } = await import('firebase/analytics');
+    if (await isSupported()) {
+      const analytics = getAnalytics(app);
+      logEventFn = (name, params) => logEvent(analytics, name, params);
+    }
   } catch {
     // Analytics ist optional – Fehler hier dürfen die App nicht beeinträchtigen.
+  }
+};
+
+/**
+ * Zählt einen Schritt im Funnel (z. B. „wizard_step“). Wirkt nur, wenn der Besucher der Statistik zugestimmt hat –
+ * sonst passiert nichts. Es werden keine Eingaben übertragen, nur der Name des Schritts.
+ */
+export const track = (name: string, params?: Record<string, string | number | boolean>) => {
+  try {
+    logEventFn?.(name, params);
+  } catch {
+    /* Statistik darf die App nie stören */
   }
 };

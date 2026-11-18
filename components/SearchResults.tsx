@@ -8,6 +8,8 @@ import { Avatar, EmptyState, LoadingBlock, Notice, PageHeader } from './ui/Bits'
 import { Icon } from './ui/Icon';
 import { errorText } from './ui/Toast';
 import MessageModal from './MessageModal';
+import { CityInput, cityErrorText } from './ui/CityInput';
+import { findPlace, loadPlaces, suggestPlaces } from '../services/places';
 
 const MatchCard: React.FC<{ match: MatchResult; onMessage: () => void; canMessage: boolean }> = ({ match, onMessage, canMessage }) => {
   const m = match.manager;
@@ -101,10 +103,25 @@ const SearchResults = () => {
 
   const matches = useMemo(() => (criteria && managers ? rankManagers(managers, criteria) : []), [criteria, managers]);
 
-  const search = (e: React.FormEvent) => {
+  const [cityError, setCityError] = useState('');
+  const search = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cityInput.trim()) return;
-    const next: Record<string, string> = { city: cityInput.trim() };
+    let cityName = cityInput.trim();
+    try {
+      const places = await loadPlaces();
+      const place = findPlace(places, cityName);
+      if (!place) {
+        setCityError(cityErrorText(cityName, suggestPlaces(places, cityName)));
+        return;
+      }
+      cityName = place.name;
+      setCityInput(cityName);
+    } catch {
+      /* Verzeichnis nicht ladbar – Eingabe verwenden */
+    }
+    setCityError('');
+    const next: Record<string, string> = { city: cityName };
     if (typeInput) next.type = typeInput;
     if (Number(unitsInput) > 0) next.units = String(Math.round(Number(unitsInput)));
     setParams(next);
@@ -125,6 +142,10 @@ const SearchResults = () => {
     </PageHeader>
     <div className="page max-w-4xl">
 
+      {cityError && <Notice kind="error" className="mb-6"><span id="sr-city-error">{cityError}</span></Notice>}
+      {params.get('doppelt') === '1' && (
+        <Notice className="mb-6">Diese Anfrage haben Sie bereits gestellt – sie ist weiterhin aktiv. Eine zweite wurde nicht angelegt.</Notice>
+      )}
       {isNew && (
         <Notice kind="success" className="mb-6">
           <p className="font-semibold">Ihre Anfrage ist gespeichert.</p>
@@ -139,7 +160,7 @@ const SearchResults = () => {
         <form onSubmit={search} className="card p-4 mb-6 grid sm:grid-cols-[1fr_auto_auto_auto] gap-3 items-end" role="search">
           <div>
             <label htmlFor="sr-city" className="label">Stadt</label>
-            <input id="sr-city" className="input" value={cityInput} onChange={e => setCityInput(e.target.value)} placeholder="z. B. Essen" />
+            <CityInput id="sr-city" value={cityInput} onChange={v => { setCityInput(v); setCityError(''); }} placeholder="Ort oder Postleitzahl" invalid={!!cityError} describedBy={cityError ? 'sr-city-error' : undefined} />
           </div>
           <div>
             <label htmlFor="sr-type" className="label">Objektart</label>
